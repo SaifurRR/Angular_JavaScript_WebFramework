@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="temperatureConverterApp">
+<head>
+    <meta charset="UTF-8">
+    <title>Temperature Converter</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+</head>
+<body>
+
+<div ng-controller="TemperatureConverterController">
+    <h2>Temperature Converter</h2>
+
+    <label for="inputTemperature">Enter Temperature:</label>
+    <input type="number" id="inputTemperature" ng-model="inputTemperature" />
+
+    <label for="selectFrom">From:</label>
+    <select id="selectFrom" ng-model="fromUnit" ng-options="unit for unit in temperatureUnits">
+    </select>
+
+    <label for="selectTo">To:</label>
+    <select id="selectTo" ng-model="toUnit" ng-options="unit for unit in temperatureUnits">
+    </select>
+
+    <button ng-click="convert()">Convert</button>
+
+    <p ng-if="result">Result: {{ result | number:2 }} {{ toUnit }}</p>
+</div>
+
+<script>
+    var app = angular.module('temperatureConverterApp', []);
+
+    app.controller('TemperatureConverterController', function ($scope) {
+        $scope.temperatureUnits = ['Celsius', 'Kelvin', 'Fahrenheit'];
+        $scope.fromUnit = 'Celsius';
+        $scope.toUnit = 'Celsius';
+
+        $scope.convert = function () {
+            if ($scope.fromUnit === $scope.toUnit) {
+                $scope.result = $scope.inputTemperature;
+                return;
+            }
+
+            switch ($scope.fromUnit) {
+                case 'Celsius':
+                    $scope.result = convertCelsiusTo($scope.inputTemperature, $scope.toUnit);
+                    break;
+                case 'Kelvin':
+                    $scope.result = convertKelvinTo($scope.inputTemperature, $scope.toUnit);
+                    break;
+                case 'Fahrenheit':
+                    $scope.result = convertFahrenheitTo($scope.inputTemperature, $scope.toUnit);
+                    break;
+                default:
+                    $scope.result = 'Invalid conversion';
+            }
+        };
+
+        function convertCelsiusTo(value, toUnit) {
+            switch (toUnit) {
+                case 'Kelvin':
+                    return value + 273.15;
+                case 'Fahrenheit':
+                    return (value * 9/5) + 32;
+                default:
+                    return value;
+            }
+        }
+
+        function convertKelvinTo(value, toUnit) {
+            switch (toUnit) {
+                case 'Celsius':
+                    return value - 273.15;
+                case 'Fahrenheit':
+                    return (value - 273.15) * 9/5 + 32;
+                default:
+                    return value;
+            }
+        }
+
+        function convertFahrenheitTo(value, toUnit) {
+            switch (toUnit) {
+                case 'Celsius':
+                    return (value - 32) * 5/9;
+                case 'Kelvin':
+                    return (value - 32) * 5/9 + 273.15;
+                default:
+                    return value;
+            }
+        }
+    });
+</script>
+
+</body>
+</html>
